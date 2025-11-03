@@ -24,6 +24,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,7 +51,11 @@ fun PantallaMainSol(modifier: Modifier, coroutineScope: CoroutineScope, snackbar
 
 @Composable
 fun LazyVerticalGridFotosSol(coroutineScope: CoroutineScope, snackbarHostState: SnackbarHostState) {
-    val listaFotos = getImagenesSol()
+    val listaFotos = remember {
+        mutableStateListOf<ImagenSol>().apply {
+            addAll(getImagenesSol())
+        }
+    }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -103,12 +108,20 @@ fun LazyVerticalGridFotosSol(coroutineScope: CoroutineScope, snackbarHostState: 
                             ) {
                                 DropdownMenuItem(
                                     text = { Text("Copiar") },
-                                    onClick = { /* Crear una copia del card */ },
+                                    onClick = {
+                                        val item = listaFotos[i]
+                                        listaFotos.add(item.copy(nombreImagen = item.nombreImagen + " copia"))
+                                        expandedMenu = false
+                                    },
                                     leadingIcon = { Icon(Icons.Default.Add, "mas") }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Eliminar") },
-                                    onClick = { /* Elimina una card */ },
+                                    onClick = {
+                                        val item = listaFotos[i]
+                                        listaFotos.remove(item)
+                                        expandedMenu = false
+                                    },
                                     leadingIcon = { Icon(Icons.Default.Delete, "borrar") }
                                 )
                             }
@@ -120,8 +133,8 @@ fun LazyVerticalGridFotosSol(coroutineScope: CoroutineScope, snackbarHostState: 
     )
 }
 
-fun getImagenesSol(): List<ImagenSol> {
-    return listOf(
+fun getImagenesSol(): MutableList<ImagenSol> {
+    return mutableListOf(
         ImagenSol("imagenCorona1",
             "imagen corona solar",
             R.drawable.corona_solar,
@@ -139,18 +152,18 @@ fun getImagenesSol(): List<ImagenSol> {
             R.drawable.espiculas,
             "Espiculas"
         ),
-        ImagenSol("imagenFilamentos",
+        ImagenSol("imagenFilamentos4",
             "imagen filamentos",
             R.drawable.filamentos,
             "Filamentos"),
         ImagenSol(
-            "imagenMagnetosfera",
+            "imagenMagnetosfera5",
             "imagen magnetosfera",
             R.drawable.magnetosfera,
             "Magnetosfera"
         ),
         ImagenSol(
-            "imagenManchaSolar",
+            "imagenManchaSolar6",
             "imagen mancha solar",
             R.drawable.manchasolar,
             "Mancha Solar"
