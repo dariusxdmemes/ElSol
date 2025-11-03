@@ -12,12 +12,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +54,7 @@ fun LazyVerticalGridFotosSol() {
         contentPadding = PaddingValues(12.dp),
         content = {
             items(listaFotos.size) { i ->
+                var expandedMenu by remember { mutableStateOf(false) }
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
@@ -71,11 +80,28 @@ fun LazyVerticalGridFotosSol() {
                                 text = listaFotos[i].textoImagen
                             )
                             IconButton(
-                                onClick = { /* Drop down menu XDXDXD */ }
+                                onClick = {
+                                    expandedMenu = true
+                                }
                             ) {
                                 Icon(
                                     Icons.Default.MoreVert,
                                     "Icono tres puntos dropdown"
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = expandedMenu,
+                                onDismissRequest = { expandedMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Copiar") },
+                                    onClick = { /* Crear una copia del card */ },
+                                    leadingIcon = { Icon(Icons.Default.Add, "mas") }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Eliminar") },
+                                    onClick = { /* Elimina una card */ },
+                                    leadingIcon = { Icon(Icons.Default.Delete, "borrar") }
                                 )
                             }
                         }
