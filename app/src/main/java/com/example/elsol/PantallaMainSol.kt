@@ -20,6 +20,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,21 +33,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun PantallaMainSol(modifier: Modifier) {
+fun PantallaMainSol(modifier: Modifier, coroutineScope: CoroutineScope, snackbarHostState: SnackbarHostState) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxSize()
     ) {
-        LazyVerticalGridFotosSol()
+        LazyVerticalGridFotosSol(coroutineScope, snackbarHostState)
     }
 }
 
 @Composable
-fun LazyVerticalGridFotosSol() {
+fun LazyVerticalGridFotosSol(coroutineScope: CoroutineScope, snackbarHostState: SnackbarHostState) {
     val listaFotos = getImagenesSol()
 
     LazyVerticalGrid(
@@ -58,7 +61,12 @@ fun LazyVerticalGridFotosSol() {
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(3.dp)
+                        .padding(3.dp),
+                    onClick = {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(listaFotos[i].textoImagen)
+                        }
+                    }
                 ) {
                     Column {
                         Image(

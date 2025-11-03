@@ -19,13 +19,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.elsol.ui.theme.ElSolTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,8 +43,12 @@ class MainActivity : ComponentActivity() {
             ElSolTheme {
 
                 var itemCount by remember { mutableIntStateOf(0) }
+                val snackbarHostState = remember { SnackbarHostState() }
+                val corutina = rememberCoroutineScope()
+                val navController = rememberNavController()
 
                 Scaffold(
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                         BottomAppBar(
@@ -92,9 +102,20 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     ) { innerPadding ->
-                 PantallaMainSol(modifier = Modifier
-                     .padding(innerPadding)
-                 )
+                    NavHost(
+                        navController = navController,
+                        startDestination = "PantallaMainSol",
+                        modifier = Modifier
+                            .padding(innerPadding)
+                    ) {
+                        composable("PantallaMainSol") {
+                            PantallaMainSol(
+                                modifier = Modifier,
+                                snackbarHostState = snackbarHostState,
+                                coroutineScope = corutina
+                                )
+                        }
+                    }
                 }
             }
         }
