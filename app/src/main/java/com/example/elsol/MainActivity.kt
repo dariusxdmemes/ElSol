@@ -75,7 +75,22 @@ class MainActivity : ComponentActivity() {
                         .padding(top = 20.dp),
                     drawerState = drawerState,
                     drawerContent = {
-                        CajonLateral(getInfoBotones())
+                        CajonLateral(
+                            getInfoBotones(),
+                            onBotonClick = { boton ->
+                                when (boton.textoBoton) {
+                                    "Build" -> {}
+                                    "Info" -> {
+                                        navController.navigate("PantallaInfo")
+                                        corutina.launch {
+                                            drawerState.close()
+                                        }
+                                    }
+                                    "Email" -> {}
+
+                                }
+                            }
+                        )
                     }
                 ) {
                     Scaffold(
@@ -150,6 +165,9 @@ class MainActivity : ComponentActivity() {
                                     coroutineScope = corutina
                                 )
                             }
+                            composable("PantallaInfo") {
+                                PantallaInfo(modifier = Modifier)
+                            }
                         }
                     }
                 }
@@ -176,7 +194,7 @@ fun getInfoBotones(): List<BotonesCajon> {
 }
 
 @Composable
-fun CajonLateral(infoBotones: List<BotonesCajon>) {
+fun CajonLateral(infoBotones: List<BotonesCajon>, onBotonClick: (BotonesCajon) -> Unit) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(topEnd = 10.dp))
@@ -191,7 +209,9 @@ fun CajonLateral(infoBotones: List<BotonesCajon>) {
             )
                 infoBotones.forEach { boton ->
                     FilledTonalButton(
-                        onClick = {  }
+                        onClick = {
+                            onBotonClick(boton)
+                        }
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
