@@ -166,7 +166,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable("PantallaInfo") {
-                                PantallaInfo(modifier = Modifier)
+                                PantallaInfo()
                             }
                         }
                     }
