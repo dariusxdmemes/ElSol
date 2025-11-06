@@ -5,15 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -26,26 +26,24 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -69,28 +67,63 @@ class MainActivity : ComponentActivity() {
                 val corutina = rememberCoroutineScope()
                 val navController = rememberNavController()
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                val listaBotones = getInfoBotones()
+                val buttonSelected = false
 
                 ModalNavigationDrawer(
                     modifier = Modifier
-                        .padding(top = 20.dp),
+                        .statusBarsPadding(),
                     drawerState = drawerState,
                     drawerContent = {
-                        CajonLateral(
-                            getInfoBotones(),
-                            onBotonClick = { boton ->
-                                when (boton.textoBoton) {
-                                    "Build" -> {}
-                                    "Info" -> {
-                                        navController.navigate("PantallaInfo")
-                                        corutina.launch {
-                                            drawerState.close()
+                        ModalDrawerSheet(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.erupcionsolar),
+                                contentDescription = "imagen cajon",
+                                contentScale = ContentScale.Crop,
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 10.dp)
+                            ) {
+                                Spacer(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                )
+                                listaBotones.forEach { boton ->
+                                    NavigationDrawerItem(
+                                        label = { Row(
+                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                        ) {
+                                            Icon(
+                                                boton.iconoBoton,
+                                                "iconoBoton"
+                                            )
+                                            Text(
+                                                boton.textoBoton
+                                            )
                                         }
-                                    }
-                                    "Email" -> {}
+                                                },
+                                        selected = buttonSelected,
+                                        onClick = {
+                                            when (boton.textoBoton) {
+                                                "Build" -> {}
+                                                "Info" -> {
+                                                    navController.navigate("PantallaInfo")
+                                                    corutina.launch {
+                                                        drawerState.close()
+                                                    }
+                                                }
+                                                "Email" -> {}
+                                            }
+                                        }
+                                    )
 
                                 }
                             }
-                        )
+                        }
                     }
                 ) {
                     Scaffold(
@@ -191,42 +224,4 @@ fun getInfoBotones(): List<BotonesCajon> {
             Icons.Default.Email
         )
     )
-}
-
-@Composable
-fun CajonLateral(infoBotones: List<BotonesCajon>, onBotonClick: (BotonesCajon) -> Unit) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(topEnd = 10.dp))
-            .fillMaxHeight()
-            .background(MaterialTheme.colorScheme.primaryContainer),
-    ) {
-        Column {
-            Image(
-                painter = painterResource(R.drawable.erupcionsolar),
-                contentDescription = "imagen cajon",
-                contentScale = ContentScale.Crop,
-            )
-                infoBotones.forEach { boton ->
-                    FilledTonalButton(
-                        onClick = {
-                            onBotonClick(boton)
-                        }
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                boton.iconoBoton,
-                                "iconoBoton"
-                            )
-                            Text(
-                                boton.textoBoton
-                            )
-                        }
-                    }
-                }
-        }
-    }
 }
