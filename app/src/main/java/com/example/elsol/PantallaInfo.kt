@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,11 +24,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaInfo() {
 
     var loading by remember {
         mutableStateOf(false)
+    }
+
+    var dateSelectorIsClicked by remember {
+        mutableStateOf(false)
+    }
+
+    val datePickerState = rememberDatePickerState()
+
+    val onDateSelected: (Long?) -> Unit = {
+        dateSelectorIsClicked
+    }
+    val onDismiss: () -> Unit = {
+        dateSelectorIsClicked = false
     }
 
     Column(
@@ -53,11 +72,39 @@ fun PantallaInfo() {
             CositoQueGira()
 
             Button(
-                onClick = {/* date picker */}
+                onClick = {
+                    dateSelectorIsClicked = !dateSelectorIsClicked
+                }
             ) {
                 Text(
                     text = "Visit planetarium. Select date"
                 )
+            }
+
+            if (dateSelectorIsClicked) {
+                DatePickerDialog(
+                    onDismissRequest = onDismiss,
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                onDateSelected(datePickerState.selectedDateMillis)
+                            }
+                        ) {
+                            Text("OK")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = onDismiss
+                        ) {
+                            Text("Cancel")
+                        }
+                    }
+                ) {
+                    DatePicker(
+                        state = datePickerState
+                    )
+                }
             }
         }
     }
